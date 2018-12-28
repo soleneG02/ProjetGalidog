@@ -1,0 +1,93 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="fill_parent"
+    android:layout_height="fill_parent"
+    android:background="#C5D2F3">
+
+    <fragment xmlns:android="http://schemas.android.com/apk/res/android"
+        xmlns:map="http://schemas.android.com/apk/res-auto"
+        xmlns:tools="http://schemas.android.com/tools"
+        android:id="@+id/map"
+        android:name="com.google.android.gms.maps.SupportMapFragment"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_marginTop="130dp"
+        android:layout_alignParentTop="true"
+        tools:context=".MapsActivity" />
+
+    <Button
+        android:id="@+id/activity_main_btn_start_record"
+        android:layout_width="280dp"
+        android:layout_height="55dp"
+        android:background="@drawable/shape_button2"
+        android:padding="10dp"
+        android:text="Démarrer l'enregistrement"
+        android:textSize="17dp"
+        android:textStyle="bold"
+        android:layout_marginTop="550dp"
+        android:layout_centerHorizontal="true"
+        android:defaultFocusHighlightEnabled="true"/>
+
+    <Button
+        android:id="@+id/activity_main_btn_droite"
+        android:layout_width="150dp"
+        android:layout_height="40dp"
+        android:layout_marginStart="20dp"
+        android:layout_marginLeft="20dp"
+        android:layout_marginTop="20dp"
+        android:background="@drawable/shape_button3"
+        android:gravity="start"
+        android:padding="10dp"
+        android:text="A droite"
+        android:textAlignment="center"
+        android:textStyle="bold" />
+
+    <Button
+        android:id="@+id/activity_main_btn_gauche"
+        android:layout_width="150dp"
+        android:layout_height="40dp"
+        android:layout_alignParentEnd="true"
+        android:layout_alignParentRight="true"
+        android:layout_marginEnd="20dp"
+        android:layout_marginRight="20dp"
+        android:layout_marginTop="20dp"
+        android:background="@drawable/shape_button3"
+        android:gravity="end"
+        android:padding="10dp"
+        android:text="A gauche"
+        android:textAlignment="center"
+        android:textStyle="bold" />
+
+    <Button
+        android:id="@+id/activity_main_btn_halte"
+        android:layout_width="150dp"
+        android:layout_height="40dp"
+        android:layout_alignParentStart="true"
+        android:layout_alignParentLeft="true"
+        android:layout_marginStart="20dp"
+        android:layout_marginLeft="20dp"
+        android:layout_marginTop="70dp"
+        android:background="@drawable/shape_button3"
+        android:gravity="start"
+        android:padding="10dp"
+        android:text="Halte"
+        android:textAlignment="center"
+        android:textStyle="bold" />
+
+    <Button
+        android:id="@+id/activity_main_btn_autre"
+        android:layout_width="150dp"
+        android:layout_height="40dp"
+        android:layout_alignParentEnd="true"
+        android:layout_alignParentRight="true"
+        android:layout_marginTop="70dp"
+        android:layout_marginEnd="20dp"
+        android:layout_marginRight="20dp"
+        android:background="@drawable/shape_button3"
+        android:gravity="end"
+        android:padding="10dp"
+        android:text="Autre commande"
+        android:textAlignment="center"
+        android:textStyle="bold" />
+
+</RelativeLayout>

@@ -1,0 +1,57 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    android:background="#FFFFFF"
+    tools:context=".MainActivity">
+
+    <TextView
+        android:id="@+id/activity_main_text_start"
+        android:layout_width="match_parent"
+        android:layout_height="58dp"
+        android:background="#1A8BE5"
+        android:gravity="center"
+        android:padding="15dp"
+        android:text="Que souhaitez vous faire ?"
+        android:textSize="20dp"
+        android:textStyle="bold"
+        android:layout_marginTop="15dp"
+        android:layout_gravity="center"/>
+
+    <Button
+        android:id="@+id/activity_main_btn_new"
+        android:layout_width="342dp"
+        android:layout_height="55dp"
+        android:background="@drawable/shape_button1"
+        android:padding="10dp"
+        android:text="Enregistrer un nouveau trajet"
+        android:textSize="17dp"
+        android:textStyle="bold"
+        android:layout_marginTop="30dp"
+        android:layout_gravity="center"/>
+
+    <Button
+        android:id="@+id/activity_main_btn_old"
+        android:layout_width="342dp"
+        android:layout_height="55dp"
+        android:background="@drawable/shape_button1"
+        android:padding="10dp"
+        android:text="Accéder au trajet enregistré"
+        android:textSize="17dp"
+        android:textStyle="bold"
+        android:layout_marginTop="25dp"
+        android:layout_gravity="center"/>
+
+    <ImageView
+        android:id="@+id/imageView"
+        android:layout_width="229dp"
+        android:layout_height="250dp"
+        android:layout_gravity="center"
+        android:layout_marginTop="45dp"
+        android:contentDescription="Logo Galidog"
+        app:srcCompat="@drawable/logo_galidog" />
+
+</LinearLayout>

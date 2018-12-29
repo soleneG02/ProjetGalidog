@@ -174,18 +174,15 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
                     pointSuivant.setIdCommande(-1);
 
                     BoutonDroite(youAreHere);
-                    Log.i("Verif hors fct", pointSuivant.toString());
+                    BoutonGauche(youAreHere);
+                    BoutonHalte(youAreHere);
+                    BoutonAutre(youAreHere);
 
-                    // MODIFIER LES AUTRES BOUTONS ET PREVOIR UN CAS OU AUCUN DES BOUTONS N'EST C
-
-                    //if (BoutonGauche()) {newPoint.setIdCommande(compteurCommande); }
-                    //if (BoutonHalte()) {newPoint.setIdCommande(compteurCommande); }
-                    //if (BoutonAutre()) {newPoint.setIdCommande(compteurCommande); }
-
+                    // Pas sure le l'idPoint s'actualise du coup...
 
                     //Toast.makeText(MapsActivity.this, newPoint.toString(), Toast.LENGTH_SHORT).show();
 
-                    /*
+                    
                     // Ajout à la liste des points du trajet
                     listePoints.add(pointSuivant);
 
@@ -242,57 +239,98 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
     }
 
 
-    public boolean BoutonGauche() {
+    public void BoutonGauche(final LatLng youAreHere) {
         //Vérification appel bouton gauche
-        commandeCreee = false;
         btnGauche.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                commandeCreee = true;
                 CommandeVocale newCommande = new CommandeVocale();
-                compteurCommande ++;
+                compteurCommande++;
                 newCommande.setIdCommande(compteurCommande);
-                //Ajouter commade vocale au tableau des commandes
+                listeCommandes.add(newCommande);
+                Log.i("Verif dans fct AVANT", pointSuivant.toString());
+                pointSuivant.setCoordonnees(youAreHere);
+                pointSuivant.setIdCommande(compteurCommande);
+                Log.i("Verif dans fct APRES", pointSuivant.toString());
                 Toast.makeText(MapsActivity.this, "Bouton gauche activé : " + compteurCommande, Toast.LENGTH_SHORT).show();
 
+                // Ajout à la liste des points du trajet
+                listePoints.add(pointSuivant);
+
+                // Affichage d'un toast au début de l'enregistrement
+                if (pointSuivant.getIdPoint() == 1) {
+                    Toast.makeText(MapsActivity.this, "Trace en cours", Toast.LENGTH_SHORT).show();
+                }
+
+                //Création d'un marqueur PROBLEME : l'idCommande n'est jamais mis à jour
+                mMap.addMarker(new MarkerOptions().position(youAreHere).title("Point n°" + pointSuivant.getIdPoint() + " de commande : " + pointSuivant.getIdCommande())); /* Forme du marqueur à changer */
             }
         });
-        return commandeCreee;
+        // A tester en bougeant, est ce que le compteur augmente parce que sinon on a un pb, ou alors on met direct la commande vocale
+        Toast.makeText(MapsActivity.this, "Fin du bouton, " + compteurCommande, Toast.LENGTH_SHORT).show();
     }
 
-    public boolean BoutonHalte() {
+    public void BoutonHalte(final LatLng youAreHere) {
         //Vérification appel bouton halte
-        commandeCreee = false;
         btnHalte.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                commandeCreee = true;
                 CommandeVocale newCommande = new CommandeVocale();
-                compteurCommande ++;
+                compteurCommande++;
                 newCommande.setIdCommande(compteurCommande);
-                //Ajouter commade vocale au tableau des commandes
+                listeCommandes.add(newCommande);
+                Log.i("Verif dans fct AVANT", pointSuivant.toString());
+                pointSuivant.setCoordonnees(youAreHere);
+                pointSuivant.setIdCommande(compteurCommande);
+                Log.i("Verif dans fct APRES", pointSuivant.toString());
                 Toast.makeText(MapsActivity.this, "Bouton halte activé : " + compteurCommande, Toast.LENGTH_SHORT).show();
+
+                // Ajout à la liste des points du trajet
+                listePoints.add(pointSuivant);
+
+                // Affichage d'un toast au début de l'enregistrement
+                if (pointSuivant.getIdPoint() == 1) {
+                    Toast.makeText(MapsActivity.this, "Trace en cours", Toast.LENGTH_SHORT).show();
+                }
+
+                //Création d'un marqueur PROBLEME : l'idCommande n'est jamais mis à jour
+                mMap.addMarker(new MarkerOptions().position(youAreHere).title("Point n°" + pointSuivant.getIdPoint() + " de commande : " + pointSuivant.getIdCommande())); /* Forme du marqueur à changer */
             }
         });
-        return commandeCreee;
+        // A tester en bougeant, est ce que le compteur augmente parce que sinon on a un pb, ou alors on met direct la commande vocale
+        Toast.makeText(MapsActivity.this, "Fin du bouton, " + compteurCommande, Toast.LENGTH_SHORT).show();
     }
 
-    public boolean BoutonAutre() {
+    public void BoutonAutre(final LatLng youAreHere) {
         //Vérification appel bouton autre
-        commandeCreee = false;
         btnAutre.setOnClickListener(new View.OnClickListener() {
             @Override
             // ATTENTION ICI IL FAUDRA APPELER UNE AUTRE ACTIVITE
             public void onClick(View v) {
-                commandeCreee = true;
                 CommandeVocale newCommande = new CommandeVocale();
-                compteurCommande ++;
+                compteurCommande++;
                 newCommande.setIdCommande(compteurCommande);
-                //Ajouter commade vocale au tableau des commandes
+                listeCommandes.add(newCommande);
+                Log.i("Verif dans fct AVANT", pointSuivant.toString());
+                pointSuivant.setCoordonnees(youAreHere);
+                pointSuivant.setIdCommande(compteurCommande);
+                Log.i("Verif dans fct APRES", pointSuivant.toString());
                 Toast.makeText(MapsActivity.this, "Bouton autre activé : " + compteurCommande, Toast.LENGTH_SHORT).show();
+
+                // Ajout à la liste des points du trajet
+                listePoints.add(pointSuivant);
+
+                // Affichage d'un toast au début de l'enregistrement
+                if (pointSuivant.getIdPoint() == 1) {
+                    Toast.makeText(MapsActivity.this, "Trace en cours", Toast.LENGTH_SHORT).show();
+                }
+
+                //Création d'un marqueur PROBLEME : l'idCommande n'est jamais mis à jour
+                mMap.addMarker(new MarkerOptions().position(youAreHere).title("Point n°" + pointSuivant.getIdPoint() + " de commande : " + pointSuivant.getIdCommande())); /* Forme du marqueur à changer */
             }
         });
-        return commandeCreee;
+        // A tester en bougeant, est ce que le compteur augmente parce que sinon on a un pb, ou alors on met direct la commande vocale
+        Toast.makeText(MapsActivity.this, "Fin du bouton, " + compteurCommande, Toast.LENGTH_SHORT).show();
     }
 
 

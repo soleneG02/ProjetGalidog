@@ -7,15 +7,13 @@ public class Point {
     private LatLng coordonnees;
     private int idPoint;
     private static int id = 0;
-    private int idCommande;
 
     public Point() {
         this.idPoint = id ++;
     }
 
-    public Point(LatLng coordonnees, int idCommande) {
+    public Point(LatLng coordonnees) {
         this.coordonnees = coordonnees;
-        this.idCommande = idCommande ;
         this.idPoint = id ++;
     }
 
@@ -23,16 +21,8 @@ public class Point {
         return coordonnees;
     }
 
-    public int getIdCommande() {
-        return idCommande;
-    }
-
     public void setCoordonnees(LatLng coordonnees) {
         this.coordonnees = coordonnees;
-    }
-
-    public void setIdCommande(int idCommande) {
-        this.idCommande = idCommande;
     }
 
     public int getIdPoint() {
@@ -48,7 +38,7 @@ public class Point {
         return "Point{" +
                 "coordonnees=" + coordonnees +
                 ", idPoint=" + idPoint +
-                ", idCommande=" + idCommande +
                 '}';
     }
 }
+

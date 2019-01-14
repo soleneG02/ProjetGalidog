@@ -165,16 +165,18 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
                     double lonNow = loc.getLongitude();
                     LatLng youAreHere = new LatLng(latNow, lonNow);
 
-                    //Association à une potentielle commande vocale
-                    pointSuivant = new Point();
+                    //Association à une potentielle commande vocale : pas de mise à jour de l'idCommande...
 
                     BoutonDroite(youAreHere);
                     BoutonGauche(youAreHere);
                     BoutonHalte(youAreHere);
                     BoutonAutre(youAreHere);
-                    
+
+                    pointSuivant = new Point(youAreHere);
+
                     // Ajout à la liste des points du trajet
                     listePoints.add(pointSuivant);
+                    // Vérificaion : Log.i("verifPoints", "Liste des points : " + listePoints);
 
                     // Affichage d'un toast au début de l'enregistrement
                     if (pointSuivant.getIdPoint() == 1) {
@@ -204,10 +206,10 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
             public void onClick(View v) {
                 CommandeVocale newCommande = new CommandeVocale("D", youAreHere);
                 listeCommandes.add(newCommande);
+                //Vérification : Log.i("vérif", "Liste des commandes :" + listeCommandes);
                 Toast.makeText(MapsActivity.this, "Bouton droite activé : " + newCommande.getIdCommande(), Toast.LENGTH_SHORT).show();
                 }
             });
-            Log.i("vérif", "Liste des commandes :" + listeCommandes);
     }
 
     public void BoutonGauche(final LatLng youAreHere) {
@@ -217,10 +219,10 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
             public void onClick(View v) {
                 CommandeVocale newCommande = new CommandeVocale("G", youAreHere);
                 listeCommandes.add(newCommande);
+                //Vérification : Log.i("vérif", "Liste des commandes :" + listeCommandes);
                 Toast.makeText(MapsActivity.this, "Bouton gauche activé : " + newCommande.getIdCommande(), Toast.LENGTH_SHORT).show();
                 }
             });
-            Log.i("vérif", "Liste des commandes :" + listeCommandes);
     }
 
     public void BoutonHalte(final LatLng youAreHere) {
@@ -230,10 +232,10 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
             public void onClick(View v) {
                 CommandeVocale newCommande = new CommandeVocale("H", youAreHere);
                 listeCommandes.add(newCommande);
+                //Vérification : Log.i("vérif", "Liste des commandes :" + listeCommandes);
                 Toast.makeText(MapsActivity.this, "Bouton halte activé : " + newCommande.getIdCommande(), Toast.LENGTH_SHORT).show();
                 }
             });
-            Log.i("vérif", "Liste des commandes :" + listeCommandes);
     }
 
     public void BoutonAutre(final LatLng youAreHere) {
@@ -243,10 +245,10 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
             public void onClick(View v) {
                 CommandeVocale newCommande = new CommandeVocale("A", youAreHere);
                 listeCommandes.add(newCommande);
+                //Vérification : Log.i("vérif", "Liste des commandes :" + listeCommandes);
                 Toast.makeText(MapsActivity.this, "Bouton autre activé : " + newCommande.getIdCommande(), Toast.LENGTH_SHORT).show();
                 }
-            });                                                                                                                                          
-            Log.i("vérif", "Liste des commandes :" + listeCommandes);
+            });
     }
 
     @Override

@@ -5,15 +5,12 @@ import com.google.android.gms.maps.model.LatLng;
 public class CommandeVocale {
 
     //private ? commande
-    private int idCommande = 0;
+    private int idCommande;
+    private static int id = 0;
     private LatLng coordonnees;
 
-    public CommandeVocale(){
-        this.idCommande ++;
-    }
-
     public CommandeVocale(String direction, LatLng coord) {
-        super();
+        this.idCommande = id ++;
         this.coordonnees = coord;
         if (direction == "D") {
             //commande = droite
@@ -44,4 +41,13 @@ public class CommandeVocale {
     public void setCoordonnees(LatLng coordonnees) {
         this.coordonnees = coordonnees;
     }
+
+    @Override
+    public String toString() {
+        return "CommandeVocale{" +
+                "idCommande=" + idCommande +
+                ", coordonnees=" + coordonnees +
+                '}';
+    }
 }
+

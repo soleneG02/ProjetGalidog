@@ -8,10 +8,6 @@ public class Point {
     private int idPoint;
     private static int id = 0;
 
-    public Point() {
-        this.idPoint = id ++;
-    }
-
     public Point(LatLng coordonnees) {
         this.coordonnees = coordonnees;
         this.idPoint = id ++;
@@ -41,4 +37,3 @@ public class Point {
                 '}';
     }
 }
-

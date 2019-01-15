@@ -1,10 +1,12 @@
 package com.example.solene.galidog;
 
+import android.media.MediaPlayer;
+
 import com.google.android.gms.maps.model.LatLng;
 
 public class CommandeVocale {
 
-    //private ? commande
+    private MediaPlayer commandeMP3;
     private int idCommande;
     private static int id = 0;
     private LatLng coordonnees;

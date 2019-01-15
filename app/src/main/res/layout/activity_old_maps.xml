@@ -1,9 +1,32 @@
 <?xml version="1.0" encoding="utf-8"?>
-<fragment xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:map="http://schemas.android.com/apk/res-auto"
-    xmlns:tools="http://schemas.android.com/tools"
-    android:id="@+id/map"
-    android:name="com.google.android.gms.maps.SupportMapFragment"
-    android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    tools:context=".OldMapsActivity" />
+
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="fill_parent"
+    android:layout_height="fill_parent"
+    android:background="#C5D2F3">
+
+    <fragment xmlns:android="http://schemas.android.com/apk/res/android"
+        xmlns:map="http://schemas.android.com/apk/res-auto"
+        xmlns:tools="http://schemas.android.com/tools"
+        android:id="@+id/map"
+        android:name="com.google.android.gms.maps.SupportMapFragment"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_alignParentStart="true"
+        android:layout_alignParentTop="true"
+        tools:context=".OldMapsActivity" />
+
+<Button
+    android:id="@+id/activity_main_btn_start_path"
+    android:layout_width="280dp"
+    android:layout_height="55dp"
+    android:background="@drawable/shape_button2"
+    android:padding="10dp"
+    android:text="Commencer le trajet"
+    android:textSize="17dp"
+    android:textStyle="bold"
+    android:layout_marginTop="550dp"
+    android:layout_centerHorizontal="true"
+    android:defaultFocusHighlightEnabled="true"/>
+
+</RelativeLayout>

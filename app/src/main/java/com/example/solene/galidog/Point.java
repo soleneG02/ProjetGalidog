@@ -4,36 +4,40 @@ import com.google.android.gms.maps.model.LatLng;
 
 public class Point {
 
-    private LatLng coordonnees;
-    private int idPoint;
-    private static int id = 0;
+    private double latitude;
+    private double longitude;
+    private double idPoint;
+    private static double id = 0;
 
-    public Point(LatLng coordonnees) {
-        this.coordonnees = coordonnees;
+    public Point(double latitude, double longitude) {
+        this.latitude = latitude;
+        this.longitude = longitude;
         this.idPoint = id ++;
     }
 
-    public LatLng getCoordonnees() {
-        return coordonnees;
+    public double getLatitude() {
+        return latitude;
     }
 
-    public void setCoordonnees(LatLng coordonnees) {
-        this.coordonnees = coordonnees;
+    public void setLatitude(double latitude) {
+        this.latitude = latitude;
     }
 
-    public int getIdPoint() {
-        return idPoint;
+    public double getLongitude() {
+        return longitude;
     }
 
-    public void setIdPoint(int idPoint) {
+    public void setLongitude(double longitude) {
+        this.longitude = longitude;
+    }
+
+    public void setIdPoint(double idPoint) {
         this.idPoint = idPoint;
     }
 
-    @Override
-    public String toString() {
-        return "Point{" +
-                "coordonnees=" + coordonnees +
-                ", idPoint=" + idPoint +
-                '}';
+    public double getIdPoint() {
+        return idPoint;
     }
+
+
 }

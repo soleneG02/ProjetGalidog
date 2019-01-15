@@ -22,7 +22,9 @@ import com.google.android.gms.maps.SupportMapFragment;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.MarkerOptions;
 
+import java.lang.reflect.Array;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 public class MapsActivity extends FragmentActivity implements OnMapReadyCallback {
@@ -39,8 +41,8 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
     private LocationListener androidLocationListener;                     
     private final static int REQUEST_CODE_UPDATE_LOCATION=42;             
     private Point pointSuivant;                                           
-    private List<Point> listePoints = new ArrayList<>();                  
-    private List<CommandeVocale> listeCommandes = new ArrayList<>();      
+    private ArrayList<Point> listePoints = new ArrayList<>();
+    private ArrayList<CommandeVocale> listeCommandes = new ArrayList<>();
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -98,7 +100,11 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
                         btnStartRecord.setOnClickListener(new View.OnClickListener() {
                             @Override
                             public void onClick(View v) {
+                                TransfertDonnees donnees = new TransfertDonnees(ArrayToTabCommande(listeCommandes), ArrayToTabPoint(listePoints));
                                 Intent retourAccueil = new Intent(MapsActivity.this, MainActivity.class);
+                                Bundle bundle = new Bundle();
+                                bundle.putParcelable("donnees", donnees);
+                                retourAccueil.putExtras(bundle);
                                 startActivity(retourAccueil);
                             }
                         });
@@ -127,7 +133,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
                     double lonNow = loc.getLongitude();
                     Toast.makeText(MapsActivity.this, "Coordonnées : "+latNow+" / "+lonNow, Toast.LENGTH_SHORT).show();
                     LatLng youAreHere = new LatLng(latNow, lonNow);
-                    Point newPoint = new Point(youAreHere);
+                    Point newPoint = new Point(latNow, lonNow);
                     listePoints.add(newPoint);
                     mMap.addMarker(new MarkerOptions().position(youAreHere).title("Vous êtes ici"));
                     int padding = 15;
@@ -172,11 +178,11 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
                     BoutonHalte(youAreHere);
                     BoutonAutre(youAreHere);
 
-                    pointSuivant = new Point(youAreHere);
+                    pointSuivant = new Point(latNow, lonNow);
 
                     // Ajout à la liste des points du trajet
                     listePoints.add(pointSuivant);
-                    // Vérificaion : Log.i("verifPoints", "Liste des points : " + listePoints);
+                    Vérificaion : Log.i("verifPoints", "Liste des points : " + listePoints);
 
                     // Affichage d'un toast au début de l'enregistrement
                     if (pointSuivant.getIdPoint() == 1) {
@@ -219,7 +225,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
             public void onClick(View v) {
                 CommandeVocale newCommande = new CommandeVocale("G", youAreHere);
                 listeCommandes.add(newCommande);
-                //Vérification : Log.i("vérif", "Liste des commandes :" + listeCommandes);
+                Vérification : Log.i("vérif", "Liste des commandes :" + listeCommandes);
                 Toast.makeText(MapsActivity.this, "Bouton gauche activé : " + newCommande.getIdCommande(), Toast.LENGTH_SHORT).show();
                 }
             });
@@ -243,10 +249,10 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         btnAutre.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                CommandeVocale newCommande = new CommandeVocale("A", youAreHere);
-                listeCommandes.add(newCommande);
+                Intent enregistrement = new Intent(MapsActivity.this, Enregistrement.class);
+                startActivity(enregistrement);
                 //Vérification : Log.i("vérif", "Liste des commandes :" + listeCommandes);
-                Toast.makeText(MapsActivity.this, "Bouton autre activé : " + newCommande.getIdCommande(), Toast.LENGTH_SHORT).show();
+                Toast.makeText(MapsActivity.this, "Bouton autre activé " , Toast.LENGTH_SHORT).show();
                 }
             });
     }
@@ -284,11 +290,23 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         }
     }
 
-    public List<Point> getListePoints() {
-        return listePoints;
+    public Point[] ArrayToTabPoint(ArrayList<Point> listePoints) {
+        int size = listePoints.size();
+        Point[] listePointsTab = new Point[size];
+        for(int i=0 ; i < listePoints.size() ; i++) {
+            Point point = listePoints.get(i);
+            listePointsTab[i] = point;
+        }
+        return listePointsTab;
     }
 
-    public List<CommandeVocale> getListeCommandes() {
-        return listeCommandes;
+    public CommandeVocale[] ArrayToTabCommande(ArrayList<CommandeVocale> listeCommandes) {
+        int size = listeCommandes.size();
+        CommandeVocale[] listeCommandesTab = new CommandeVocale[size];
+        for(int i=0 ; i < listeCommandes.size() ; i++) {
+            CommandeVocale comVoc = listeCommandes.get(i);
+            listeCommandesTab[i] = comVoc;
+        }
+        return listeCommandesTab;
     }
 }

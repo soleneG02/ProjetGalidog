@@ -17,11 +17,13 @@ import android.view.Gravity;
 import android.view.View;
 import android.widget.Toast;
 
+import com.google.android.gms.maps.CameraUpdate;
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.OnMapReadyCallback;
 import com.google.android.gms.maps.SupportMapFragment;
 import com.google.android.gms.maps.model.LatLng;
+import com.google.android.gms.maps.model.LatLngBounds;
 import com.google.android.gms.maps.model.MarkerOptions;
 
 import java.util.ArrayList;
@@ -58,7 +60,9 @@ public class OldMapsActivity extends FragmentActivity implements OnMapReadyCallb
     public void onMapReady(GoogleMap googleMap) {
         mMap = googleMap;
 
-        androidFirstLocation();
+        pathView(); // afficher le trajet enregistré
+
+        androidFirstLocation();   //se positionner
 
         /* début du trajet */
         btnStartPath.setOnClickListener(new View.OnClickListener() {
@@ -91,7 +95,6 @@ public class OldMapsActivity extends FragmentActivity implements OnMapReadyCallb
 
     }
 
-
     private LocationManager androidLocationManager;
     private LocationListener androidLocationListener;
     private final static int REQUEST_CODE_UPDATE_LOCATION = 42;
@@ -100,6 +103,26 @@ public class OldMapsActivity extends FragmentActivity implements OnMapReadyCallb
     private Point pointSuivant;
     private List<Point> listePoints = new ArrayList<>();
     private List<CommandeVocale> listeCommandes = new ArrayList<>();
+
+
+
+    public void pathView() {
+        /* cette fonction affiche le chemin qui est enregistré*/
+
+        LatLngBounds.Builder builder = new LatLngBounds.Builder();
+
+        for (int i = 0; i < listePoints.size(); i++) {
+                //la taille : parcourir la liste une premiere fois pour voir le premier element non nul??
+           Point pointChemin = listePoints.get(i);
+           LatLng coordonnees = pointChemin.getCoordonnees();
+            mMap.addMarker(new MarkerOptions().position(coordonnees));
+            builder.include(coordonnees);
+        }
+        LatLngBounds bounds = builder.build();
+        CameraUpdate cu = CameraUpdateFactory.newLatLngBounds(bounds, 0);
+        mMap.animateCamera(cu);  //ajuste la caméra sur l'ensemble des points
+    }
+
 
 
     public void androidFirstLocation() {
@@ -128,14 +151,11 @@ public class OldMapsActivity extends FragmentActivity implements OnMapReadyCallb
                     mMap.animateCamera(CameraUpdateFactory.newLatLngZoom(youAreHere, padding));
                 }
 
-                public void onStatusChanged(String provider, int status, Bundle extras) {
-                }
+                public void onStatusChanged(String provider, int status, Bundle extras) {}
 
-                public void onProviderEnabled(String provider) {
-                }
+                public void onProviderEnabled(String provider) {}
 
-                public void onProviderDisabled(String provider) {
-                }
+                public void onProviderDisabled(String provider) {}
             };
 
             /* Requête unique (première géolocalisation) */
@@ -160,12 +180,14 @@ public class OldMapsActivity extends FragmentActivity implements OnMapReadyCallb
             androidLocationManager = (LocationManager) this.getSystemService(OldMapsActivity.this.LOCATION_SERVICE);
             androidLocationListener = new LocationListener() {
                 public void onLocationChanged(Location loc) {
+
                     // Récupération de la localisation
                     double latNow = loc.getLatitude();
                     double lonNow = loc.getLongitude();
                     LatLng youAreHere = new LatLng(latNow, lonNow);
 
-                    listePoints.add(pointSuivant);
+                    // affichage
+                    mMap.addMarker(new MarkerOptions().position(youAreHere));
 
                 }
                 public void onStatusChanged(String provider, int status, Bundle extras) {}
@@ -173,9 +195,15 @@ public class OldMapsActivity extends FragmentActivity implements OnMapReadyCallb
                 public void onProviderDisabled(String provider) {}
             };
 
+            androidLocationManager.requestLocationUpdates(
+                    LocationManager.GPS_PROVIDER,
+                    10, // en millisecondes
+                    1, // en mètres
+                    androidLocationListener);
 
         }
     }
+
 
     @Override
     public void onRequestPermissionsResult(int requestCode, String permissions[], int[] grantResults) {
@@ -211,3 +239,4 @@ public class OldMapsActivity extends FragmentActivity implements OnMapReadyCallb
     }
 
 }
+

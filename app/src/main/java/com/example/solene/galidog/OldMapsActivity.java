@@ -12,9 +12,6 @@ import android.location.Location;
 import android.location.LocationListener;
 import android.location.LocationManager;
 import android.support.v4.app.ActivityCompat;
-import android.support.v4.app.FragmentActivity;
-import android.os.Bundle;
-import android.util.Log;
 import android.view.Gravity;
 import android.view.View;
 import android.widget.Toast;
@@ -31,6 +28,8 @@ import com.google.android.gms.maps.model.MarkerOptions;
 import java.util.ArrayList;
 import java.util.List;
 
+import static java.lang.Math.sqrt;
+
 public class OldMapsActivity extends FragmentActivity implements OnMapReadyCallback {
 
     private GoogleMap mMap;
@@ -46,7 +45,13 @@ public class OldMapsActivity extends FragmentActivity implements OnMapReadyCallb
         mapFragment.getMapAsync(this);
 
         btnStartPath = (Button) findViewById(R.id.activity_main_btn_start_path);
+
     }
+
+    Bundle bundle = getIntent().getExtras();
+    TransfertDonnees donnees = bundle.getParcelable("données");
+    private ArrayList<Point> listePoints = TabToArrayPoint(donnees.getListePoints());
+    private ArrayList<CommandeVocale> listeCommandes = TabToArrayCommande(donnees.getListeCommandes());
 
 
     /**
@@ -103,8 +108,7 @@ public class OldMapsActivity extends FragmentActivity implements OnMapReadyCallb
     private boolean commandeCreee = false;
     private int compteurCommande = 0;
     private Point pointSuivant;
-    private List<Point> listePoints = new ArrayList<>();
-    private List<CommandeVocale> listeCommandes = new ArrayList<>();
+
 
 
 
@@ -190,10 +194,17 @@ public class OldMapsActivity extends FragmentActivity implements OnMapReadyCallb
 
                     // affichage
                     mMap.addMarker(new MarkerOptions().position(youAreHere));
+                    CommandeVocale commande = listeCommandes.get(0);
+                    LatLng comm = commande.getCoordonnees();
+                    double latComm = comm.latitude;
+                    double lonComm = comm.longitude;
 
-                    // lecture de la commande vocale
+                    // lecture de la commande vocale si on s'approche suffisement près
+                    if (sqrt(Math.pow(latNow-lonNow,2)+Math.pow(latComm-lonComm,2))<5) {
+                        //lire la commande
+                        listeCommandes.remove(0);
+                    }
                     
-
                 }
                 public void onStatusChanged(String provider, int status, Bundle extras) {}
                 public void onProviderEnabled(String provider) {}
@@ -207,6 +218,27 @@ public class OldMapsActivity extends FragmentActivity implements OnMapReadyCallb
                     androidLocationListener);
 
         }
+    }
+
+
+    public ArrayList<Point> TabToArrayPoint(Point[] listePoints) {
+        int size = listePoints.length;
+        ArrayList<Point> listePointsArray = new ArrayList<>();
+        for(int i=0 ; i < size ; i++) {
+            Point point = listePoints[i];
+            listePointsArray.add(point);
+        }
+        return listePointsArray;
+    }
+
+    public ArrayList<CommandeVocale> TabToArrayCommande(CommandeVocale[] listeCommandes) {
+        int size = listeCommandes.length;
+        ArrayList<CommandeVocale> listeCommandesArray = new ArrayList<>();
+        for(int i=0 ; i < size ; i++) {
+            CommandeVocale comVoc = listeCommandes[i];
+            listeCommandesArray.add(comVoc);
+        }
+        return listeCommandesArray;
     }
 
 

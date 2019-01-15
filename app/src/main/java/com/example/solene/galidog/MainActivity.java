@@ -31,11 +31,21 @@ public class MainActivity extends AppCompatActivity {
             }
         });
 
+        //Vérifier qu'on a des données
         btnOldPath.setOnClickListener(new View.OnClickListener() {
             @Override
             /* L'utilisateur souhaite accéder au chemin enregistré, accès à l'activité correspondante */
             public void onClick(View v) {
                 Intent intentOldMapsActivity = new Intent(MainActivity.this, OldMapsActivity.class);
+
+                Bundle bundle = getIntent().getExtras();
+                TransfertDonnees donnees = bundle.getParcelable("données");
+                    // donnees.getListePonts..
+
+                Bundle bundle2 = new Bundle();
+                bundle.putParcelable("donnees", donnees);
+                intentOldMapsActivity.putExtras(bundle2);
+
                 startActivity(intentOldMapsActivity);
             }
         });

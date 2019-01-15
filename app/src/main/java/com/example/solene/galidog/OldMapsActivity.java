@@ -1,5 +1,7 @@
 package com.example.solene.galidog;
 
+
+
 import android.support.v4.app.FragmentActivity;
 import android.os.Bundle;
 import android.widget.Button;
@@ -189,6 +191,9 @@ public class OldMapsActivity extends FragmentActivity implements OnMapReadyCallb
                     // affichage
                     mMap.addMarker(new MarkerOptions().position(youAreHere));
 
+                    // lecture de la commande vocale
+                    
+
                 }
                 public void onStatusChanged(String provider, int status, Bundle extras) {}
                 public void onProviderEnabled(String provider) {}
@@ -239,4 +244,3 @@ public class OldMapsActivity extends FragmentActivity implements OnMapReadyCallb
     }
 
 }
-

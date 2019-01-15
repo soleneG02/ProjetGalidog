@@ -3,9 +3,12 @@ package com.example.solene.galidog;
 import android.Manifest;
 import android.content.Intent;
 import android.content.pm.PackageManager;
+import android.location.GpsSatellite;
+import android.location.GpsStatus;
 import android.location.Location;
 import android.location.LocationListener;
 import android.location.LocationManager;
+import android.support.annotation.DrawableRes;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.app.FragmentActivity;
 import android.os.Bundle;
@@ -25,6 +28,7 @@ import com.google.android.gms.maps.model.MarkerOptions;
 import java.lang.reflect.Array;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Iterator;
 import java.util.List;
 
 public class MapsActivity extends FragmentActivity implements OnMapReadyCallback {
@@ -178,18 +182,22 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
                     BoutonHalte(youAreHere);
                     BoutonAutre(youAreHere);
 
-                    pointSuivant = new Point(latNow, lonNow);
+                    if (RechercheNbSatellite() >= 5) {
+                        pointSuivant = new Point(latNow, lonNow);
 
-                    // Ajout à la liste des points du trajet
-                    listePoints.add(pointSuivant);
-                    Vérificaion : Log.i("verifPoints", "Liste des points : " + listePoints);
+                        // Ajout à la liste des points du trajet
+                        listePoints.add(pointSuivant);
+                        Vérificaion:
+                        Log.i("verifPoints", "Liste des points : " + listePoints);
 
-                    // Affichage d'un toast au début de l'enregistrement
-                    if (pointSuivant.getIdPoint() == 1) {
-                        Toast.makeText(MapsActivity.this, "Trace en cours ", Toast.LENGTH_SHORT).show();
+                        // Affichage d'un toast au début de l'enregistrement
+                        if (pointSuivant.getIdPoint() == 1) {
+                            Toast.makeText(MapsActivity.this, "Trace en cours ", Toast.LENGTH_SHORT).show();
+                        }
+
+                        //Création d'un marqueur
+                        mMap.addMarker(new MarkerOptions().position(youAreHere).title("Point n°" + pointSuivant.getIdPoint()));
                     }
-                    //Création d'un marqueur 
-                    mMap.addMarker(new MarkerOptions().position(youAreHere).title("Point n°" + pointSuivant.getIdPoint())); /* Forme du marqueur à changer */
                 }
                 public void onStatusChanged(String provider, int status, Bundle extras) {}
                 public void onProviderEnabled(String provider) {}
@@ -249,12 +257,43 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         btnAutre.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Intent enregistrement = new Intent(MapsActivity.this, Enregistrement.class);
-                startActivity(enregistrement);
+                //Intent enregistrement = new Intent(MapsActivity.this, Enregistrement.class);
+                //startActivity(enregistrement);
+
+                btnDroite.setText("Record");
+                btnDroite.setBackground(getDrawable(R.drawable.button_record));
+                btnGauche.setText("Stop");
+                btnHalte.setText("Play");
+                btnAutre.setText("Valider");
+
+                //Mettre le code d'enregistrement Fonction()
+                btnAutre.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        btnDroite.setText("A droite");
+                        btnDroite.setBackground(getDrawable(R.drawable.button_record));
+                        btnGauche.setText("A gauche");
+                        btnHalte.setText("Halte");
+                        btnAutre.setText("Autre Commande");
+                    }
+                });
+
                 //Vérification : Log.i("vérif", "Liste des commandes :" + listeCommandes);
                 Toast.makeText(MapsActivity.this, "Bouton autre activé " , Toast.LENGTH_SHORT).show();
                 }
             });
+    }
+
+    // FONCTION A VERIFIER
+    public int RechercheNbSatellite() {
+        int totalSat = 0;
+        for (GpsSatellite satellite : androidLocationManager.getGpsStatus(null).getSatellites()) {
+            if(satellite .usedInFix()) {
+                totalSat ++;
+            }
+        }
+        Log.i("NbSatellites", "Nombre de satellites accessibles : " + totalSat);
+        return totalSat;
     }
 
     @Override

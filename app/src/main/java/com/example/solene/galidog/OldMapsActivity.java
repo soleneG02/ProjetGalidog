@@ -118,9 +118,9 @@ public class OldMapsActivity extends FragmentActivity implements OnMapReadyCallb
         LatLngBounds.Builder builder = new LatLngBounds.Builder();
 
         for (int i = 0; i < listePoints.size(); i++) {
-                //la taille : parcourir la liste une premiere fois pour voir le premier element non nul??
-           Point pointChemin = listePoints.get(i);
-           LatLng coordonnees = pointChemin.getCoordonnees();
+            //la taille : parcourir la liste une premiere fois pour voir le premier element non nul??
+            Point pointChemin = listePoints.get(i);
+            LatLng coordonnees = new LatLng(pointChemin.getLatitude(), pointChemin.getLongitude());
             mMap.addMarker(new MarkerOptions().position(coordonnees));
             builder.include(coordonnees);
         }
@@ -150,7 +150,7 @@ public class OldMapsActivity extends FragmentActivity implements OnMapReadyCallb
                     double lonNow = loc.getLongitude();
                     Toast.makeText(OldMapsActivity.this, "Coordonnées : " + latNow + " / " + lonNow, Toast.LENGTH_SHORT).show();
                     LatLng youAreHere = new LatLng(latNow, lonNow);
-                    Point newPoint = new Point(youAreHere, -1);
+                    Point newPoint = new Point(latNow, lonNow);
                     listePoints.add(newPoint);
                     mMap.addMarker(new MarkerOptions().position(youAreHere).title("Vous êtes ici"));
                     int padding = 15;
@@ -204,7 +204,7 @@ public class OldMapsActivity extends FragmentActivity implements OnMapReadyCallb
                         //lire la commande
                         listeCommandes.remove(0);
                     }
-                    
+
                 }
                 public void onStatusChanged(String provider, int status, Bundle extras) {}
                 public void onProviderEnabled(String provider) {}

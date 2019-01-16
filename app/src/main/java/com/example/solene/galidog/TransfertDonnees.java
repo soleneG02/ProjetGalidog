@@ -11,6 +11,10 @@ public class TransfertDonnees implements Parcelable {
     private Point[] listePoints;
     private int indicePoint;
 
+    public TransfertDonnees() {
+        this.listePoints = new Point[0];
+        this.listeCommandes = new CommandeVocale[0];
+    }
 
     public TransfertDonnees(CommandeVocale[] comVoc, Point[] pt) {
         this.listeCommandes = comVoc;
@@ -58,4 +62,5 @@ public class TransfertDonnees implements Parcelable {
         dest.writeArray(listeCommandes);
         dest.writeArray(listePoints);
     }
+
 }

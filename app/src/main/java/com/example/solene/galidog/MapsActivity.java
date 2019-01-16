@@ -8,10 +8,14 @@ import android.location.GpsStatus;
 import android.location.Location;
 import android.location.LocationListener;
 import android.location.LocationManager;
+import android.media.MediaPlayer;
+import android.media.MediaRecorder;
+import android.os.Environment;
 import android.support.annotation.DrawableRes;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.app.FragmentActivity;
 import android.os.Bundle;
+import android.support.v4.content.ContextCompat;
 import android.util.Log;
 import android.view.Gravity;
 import android.view.View;
@@ -25,11 +29,16 @@ import com.google.android.gms.maps.SupportMapFragment;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.MarkerOptions;
 
+import java.io.IOException;
 import java.lang.reflect.Array;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Random;
+
+import static android.Manifest.permission.WRITE_EXTERNAL_STORAGE;
+import static android.Manifest.permission.RECORD_AUDIO;
 
 public class MapsActivity extends FragmentActivity implements OnMapReadyCallback {
 
@@ -48,6 +57,13 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
     private ArrayList<Point> listePoints = new ArrayList<>();
     private ArrayList<CommandeVocale> listeCommandes = new ArrayList<>();
 
+    String AudioSavePathInDevice = null;
+    MediaRecorder mediaRecorder ;
+    Random random ;
+    String RandomAudioFileName = "ABCDEFGHIJKLMNOP";
+    public static final int RequestPermissionCode = 1;
+    MediaPlayer mediaPlayer ;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -62,6 +78,8 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         btnGauche = (Button) findViewById(R.id.activity_main_btn_gauche);
         btnHalte = (Button) findViewById(R.id.activity_main_btn_halte);
         btnAutre = (Button) findViewById(R.id.activity_main_btn_autre);
+
+        random = new Random();
 
     }
 
@@ -182,7 +200,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
                     BoutonHalte(youAreHere);
                     BoutonAutre(youAreHere);
 
-                    if (RechercheNbSatellite() >= 5) {
+                    if (RechercheNbSatellite() >= 0) {
                         pointSuivant = new Point(latNow, lonNow);
 
                         // Ajout à la liste des points du trajet
@@ -257,32 +275,137 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         btnAutre.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+
                 //Intent enregistrement = new Intent(MapsActivity.this, Enregistrement.class);
                 //startActivity(enregistrement);
 
-                btnDroite.setText("Record");
+                btnDroite.setText("Enregistrer");
                 btnDroite.setBackground(getDrawable(R.drawable.button_record));
-                btnGauche.setText("Stop");
-                btnHalte.setText("Play");
+                btnGauche.setText("Arrêter");
+                btnHalte.setText("Jouer");
                 btnAutre.setText("Valider");
+                Toast.makeText(MapsActivity.this, "Bouton autre activé ",
+                        Toast.LENGTH_SHORT).show();
 
-                //Mettre le code d'enregistrement Fonction()
-                btnAutre.setOnClickListener(new View.OnClickListener() {
+                Enregistrement();
+            }
+        });
+    }
+
+    public void Enregistrement() {
+
+        btnDroite.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+
+                if(checkPermission()) {
+
+                    AudioSavePathInDevice = Environment.getExternalStorageDirectory().getAbsolutePath() + "/" + CreateRandomAudioFileName(5) + "AudioRecording.3gp";
+
+                    MediaRecorderReady();
+
+                    try {
+                        mediaRecorder.prepare();
+                        mediaRecorder.start();
+                    } catch (IllegalStateException e) {
+                        // TODO Auto-generated catch block
+                        e.printStackTrace();
+                    } catch (IOException e) {
+                        // TODO Auto-generated catch block
+                        e.printStackTrace();
+                    }
+
+                    btnDroite.setEnabled(false);
+                    btnGauche.setEnabled(true);
+                    btnAutre.setEnabled(false);
+
+                    Toast.makeText(MapsActivity.this, "Début de l'enregistrement",
+                            Toast.LENGTH_LONG).show();
+                } else {
+                    requestPermission();
+                }
+
+            }
+        });
+
+        btnGauche.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                mediaRecorder.stop();
+                btnGauche.setEnabled(false);
+                btnHalte.setEnabled(true);
+                btnDroite.setEnabled(true);
+                btnAutre.setEnabled(true);
+
+                Toast.makeText(MapsActivity.this, "Fin de l'enregistrement",
+                        Toast.LENGTH_LONG).show();
+            }
+        });
+
+        btnHalte.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) throws IllegalArgumentException,
+                    SecurityException, IllegalStateException {
+
+                btnGauche.setEnabled(false);
+                btnDroite.setEnabled(false);
+                btnAutre.setEnabled(false);
+                btnHalte.setText("Couper");
+
+                mediaPlayer = new MediaPlayer();
+                try {
+                    mediaPlayer.setDataSource(AudioSavePathInDevice);
+                    mediaPlayer.prepare();
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+
+                mediaPlayer.start();
+                Toast.makeText(MapsActivity.this, "Écoute de l'enregistrement",
+                        Toast.LENGTH_LONG).show();
+
+                btnHalte.setOnClickListener(new View.OnClickListener(){
                     @Override
-                    public void onClick(View v) {
-                        btnDroite.setText("A droite");
-                        btnDroite.setBackground(getDrawable(R.drawable.button_record));
-                        btnGauche.setText("A gauche");
-                        btnHalte.setText("Halte");
-                        btnAutre.setText("Autre Commande");
+                    public void onClick(View view) throws IllegalArgumentException,
+                            SecurityException, IllegalStateException {
+
+                        btnGauche.setEnabled(true);
+                        btnDroite.setEnabled(true);
+                        btnAutre.setEnabled(true);
+                        btnHalte.setText("Jouer");
+                        mediaPlayer.stop();
+                        Toast.makeText(MapsActivity.this, "Fin de l'écoute",
+                                Toast.LENGTH_LONG).show();
                     }
                 });
+            }
+        });
 
-                //Vérification : Log.i("vérif", "Liste des commandes :" + listeCommandes);
-                Toast.makeText(MapsActivity.this, "Bouton autre activé " , Toast.LENGTH_SHORT).show();
-                }
-            });
+        btnAutre.setOnClickListener(new View.OnClickListener() {
+
+            @Override
+            public void onClick(View view) {
+
+                btnDroite.setText("A droite");
+                btnDroite.setBackground(getDrawable(R.drawable.button_record));
+                btnGauche.setText("A gauche");
+                btnHalte.setText("Halte");
+                btnAutre.setText("Autre Commande");
+                btnGauche.setEnabled(true);
+                btnDroite.setEnabled(true);
+                btnAutre.setEnabled(true);
+                btnHalte.setEnabled(true);}});
+
+        if(mediaPlayer != null){
+            mediaPlayer.stop();
+            mediaPlayer.release();
+            MediaRecorderReady();
+        }
+        Toast.makeText(MapsActivity.this, "Bouton autre désactivé " ,
+                Toast.LENGTH_SHORT).show();
+
     }
+
 
     // FONCTION A VERIFIER
     public int RechercheNbSatellite() {
@@ -311,6 +434,26 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
                 }
                 return;
         }
+
+        switch (requestCode) {
+            case RequestPermissionCode:
+                if (grantResults.length> 0) {
+                    boolean StoragePermission = grantResults[0] ==
+                            PackageManager.PERMISSION_GRANTED;
+                    boolean RecordPermission = grantResults[1] ==
+                            PackageManager.PERMISSION_GRANTED;
+
+                    if (StoragePermission && RecordPermission) {
+                        Toast.makeText(MapsActivity.this, "Permission Granted",
+                                Toast.LENGTH_LONG).show();
+                    } else {
+                        Toast.makeText(MapsActivity.this,"Permission Denied",
+                                Toast.LENGTH_LONG).show();
+                    }
+                }
+                break;
+        }
+
     }
 
     @Override
@@ -347,5 +490,39 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
             listeCommandesTab[i] = comVoc;
         }
         return listeCommandesTab;
+    }
+
+    public void MediaRecorderReady(){
+        mediaRecorder=new MediaRecorder();
+        mediaRecorder.setAudioSource(MediaRecorder.AudioSource.MIC);
+        mediaRecorder.setOutputFormat(MediaRecorder.OutputFormat.THREE_GPP);
+        mediaRecorder.setAudioEncoder(MediaRecorder.OutputFormat.AMR_NB);
+        mediaRecorder.setOutputFile(AudioSavePathInDevice);
+    }
+
+    public String CreateRandomAudioFileName(int string){
+        StringBuilder stringBuilder = new StringBuilder( string );
+        int i = 0 ;
+        while(i < string ) {
+            stringBuilder.append(RandomAudioFileName.
+                    charAt(random.nextInt(RandomAudioFileName.length())));
+
+            i++ ;
+        }
+        return stringBuilder.toString();
+    }
+
+    private void requestPermission() {
+        ActivityCompat.requestPermissions(MapsActivity.this, new
+                String[]{WRITE_EXTERNAL_STORAGE, RECORD_AUDIO}, RequestPermissionCode);
+    }
+
+    public boolean checkPermission() {
+        int result = ContextCompat.checkSelfPermission(getApplicationContext(),
+                WRITE_EXTERNAL_STORAGE);
+        int result1 = ContextCompat.checkSelfPermission(getApplicationContext(),
+                RECORD_AUDIO);
+        return result == PackageManager.PERMISSION_GRANTED &&
+                result1 == PackageManager.PERMISSION_GRANTED;
     }
 }

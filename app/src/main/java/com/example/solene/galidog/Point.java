@@ -1,7 +1,5 @@
 package com.example.solene.galidog;
 
-import com.google.android.gms.maps.model.LatLng;
-
 public class Point {
 
     private double latitude;

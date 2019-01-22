@@ -5,38 +5,83 @@ import android.content.res.AssetFileDescriptor;
 import android.content.res.AssetManager;
 import android.media.MediaPlayer;
 import android.net.Uri;
+import android.os.Bundle;
+import android.os.Parcel;
+import android.os.Parcelable;
+import android.provider.MediaStore;
 
 import com.google.android.gms.maps.model.LatLng;
 
 import java.io.IOException;
 
-public class CommandeVocale {
+public class CommandeVocale implements Parcelable {
 
-    private MediaPlayer commandeMP3;
     private int idCommande;
     private static int id = 0;
-    private LatLng coordonnees;
+    private double latitude;
+    private double longitude;
+    private String direction;
 
-    public CommandeVocale(String direction, LatLng coord, Context context) throws IOException {
+    public CommandeVocale(String direct, double lat, double lon, Context context) throws IOException {
         this.idCommande = id ++;
-        this.coordonnees = coord;
+        this.latitude = lat;
+        this.longitude = lon;
+        this.direction = direct;
         if (direction == "D") {
-            commandeMP3 = MediaPlayer.create(context, R.raw.droite);
-            commandeMP3.start();
+            MediaPlayer jouer = MediaPlayer.create(context, R.raw.droite);
+            jouer.start();
         }
         else if (direction == "G") {
-            commandeMP3 = MediaPlayer.create(context, R.raw.gauche);
-            commandeMP3.start();
+            MediaPlayer jouer = MediaPlayer.create(context, R.raw.gauche);
+            jouer.start();
         }
         else if (direction == "H") {
-            commandeMP3 = MediaPlayer.create(context, R.raw.halte);
-            commandeMP3.start();
+            MediaPlayer jouer = MediaPlayer.create(context, R.raw.halte);
+            jouer.start();
         }
         else if (direction == "A") {
-            commandeMP3 = MediaPlayer.create(context, R.raw.activez);
-            commandeMP3.start();
+            MediaPlayer jouer = MediaPlayer.create(context, R.raw.activez);
+            jouer.start();
         }
     }
+
+    public void initCommande(Context context) {
+        if (direction == "D") {
+            MediaPlayer jouer = MediaPlayer.create(context, R.raw.droite);
+            jouer.start();
+        }
+        else if (direction == "G") {
+            MediaPlayer jouer = MediaPlayer.create(context, R.raw.gauche);
+            jouer.start();
+        }
+        else if (direction == "H") {
+            MediaPlayer jouer = MediaPlayer.create(context, R.raw.halte);
+            jouer.start();
+        }
+        else if (direction == "A") {
+            MediaPlayer jouer = MediaPlayer.create(context, R.raw.activez);
+            jouer.start();
+        }
+    }
+
+    protected CommandeVocale(Parcel in) {
+        idCommande = in.readInt();
+        latitude = in.readDouble();
+        longitude = in.readDouble();
+        direction = in.readString();
+    }
+
+    public static final Creator<CommandeVocale> CREATOR = new Creator<CommandeVocale>() {
+        @Override
+        public CommandeVocale createFromParcel(Parcel in) {
+            return new CommandeVocale(in);
+        }
+
+        @Override
+        public CommandeVocale[] newArray(int size) {
+            return new CommandeVocale[size];
+        }
+    };
 
     public int getIdCommande() {
         return idCommande;
@@ -46,27 +91,41 @@ public class CommandeVocale {
         this.idCommande = indiceCommande;
     }
 
-    public LatLng getCoordonnees() {
-        return coordonnees;
+    public double getLatitude() {
+        return latitude;
     }
 
-    public void setCoordonnees(LatLng coordonnees) {
-        this.coordonnees = coordonnees;
+    public void setLatitude(double latitude) {
+        this.latitude = latitude;
     }
 
-    public MediaPlayer getCommandeMP3() {
-        return commandeMP3;
+    public double getLongitude() {
+        return longitude;
     }
 
-    public void setCommandeMP3(MediaPlayer commandeMP3) {
-        this.commandeMP3 = commandeMP3;
+    public void setLongitude(double longitude) {
+        this.longitude = longitude;
     }
 
     @Override
     public String toString() {
         return "CommandeVocale{" +
                 "idCommande=" + idCommande +
-                ", coordonnees=" + coordonnees +
+                ", latitude=" + latitude +
+                ", longitude=" + longitude +
                 '}';
+    }
+
+    @Override
+    public int describeContents() {
+        return 0;
+    }
+
+    @Override
+    public void writeToParcel(Parcel dest, int flags) {
+        dest.writeInt(idCommande);
+        dest.writeDouble(latitude);
+        dest.writeDouble(longitude);
+        dest.writeString(direction);
     }
 }

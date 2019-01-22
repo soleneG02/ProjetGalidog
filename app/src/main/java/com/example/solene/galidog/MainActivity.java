@@ -8,6 +8,8 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.TextView;
 
+import java.util.ArrayList;
+
 public class MainActivity extends AppCompatActivity {
 
     private TextView textStart;
@@ -34,11 +36,11 @@ public class MainActivity extends AppCompatActivity {
                 }
             });
 
-            if (intent.hasExtra("donnees")){
-                Bundle bundle = getIntent().getExtras();
-                final TransfertDonnees donnees = bundle.getParcelable("donnees");
-
-                Log.i("salut", "salut, je suis rentré dans le if");
+            if (intent.hasExtra("commandes")){
+                final ArrayList<CommandeVocale> listeCommandes = getIntent().getParcelableArrayListExtra("commandes");
+                final ArrayList<Point> listePoints = getIntent().getParcelableArrayListExtra("points");
+                Log.i("Salur","Salut, Commandes créée :" + listeCommandes);
+                Log.i("Salur","Salut, Point créée :" + listePoints);
 
                 btnOldPath.setOnClickListener(new View.OnClickListener() {
                     @Override
@@ -46,22 +48,19 @@ public class MainActivity extends AppCompatActivity {
                     public void onClick(View v) {
                         Log.i("salut", "salut, je suis rentré dans l'appel à l'activité");
                         Intent intentOldMapsActivity = new Intent(MainActivity.this, OldMapsActivity.class);
-                        Bundle bundle = new Bundle();
-                        bundle.putParcelable("donnees", donnees);
-                        intentOldMapsActivity.putExtras(bundle);
+                        intentOldMapsActivity.putParcelableArrayListExtra("commandes", listeCommandes);
+                        intentOldMapsActivity.putParcelableArrayListExtra("points", listePoints);
+                        //Bundle bundle = new Bundle();
+                        //bundle.putParcelable("donnees", donnees);
+                        //intentOldMapsActivity.putExtras(bundle);
                         startActivity(intentOldMapsActivity);
                     }
                 });
             }
 
-
-
-
-
         }
 
         }
-
-
 
 }
+

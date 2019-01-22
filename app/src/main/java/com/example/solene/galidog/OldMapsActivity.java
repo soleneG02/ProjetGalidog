@@ -4,6 +4,7 @@ package com.example.solene.galidog;
 
 import android.support.v4.app.FragmentActivity;
 import android.os.Bundle;
+import android.util.Log;
 import android.widget.Button;
 import android.Manifest;
 import android.content.Intent;
@@ -34,6 +35,8 @@ public class OldMapsActivity extends FragmentActivity implements OnMapReadyCallb
 
     private GoogleMap mMap;
     private Button btnStartPath;
+    private ArrayList<CommandeVocale> listeCommandes;
+    private ArrayList<Point> listePoints;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -44,15 +47,14 @@ public class OldMapsActivity extends FragmentActivity implements OnMapReadyCallb
                 .findFragmentById(R.id.map);
         mapFragment.getMapAsync(this);
 
+        listeCommandes = getIntent().getParcelableArrayListExtra("commandes");
+        listePoints = getIntent().getParcelableArrayListExtra("points");
+        Log.i("Salur OLD MAP","Salut, Commandes créée :" + listeCommandes);
+        Log.i("Salur OLD MAP","Salut, Point créée :" + listePoints);
+
         btnStartPath = (Button) findViewById(R.id.activity_main_btn_start_path);
 
     }
-
-    Bundle bundle = getIntent().getExtras();
-    TransfertDonnees donnees = bundle.getParcelable("données");
-    private ArrayList<Point> listePoints = TabToArrayPoint(donnees.getListePoints());
-    private ArrayList<CommandeVocale> listeCommandes = TabToArrayCommande(donnees.getListeCommandes());
-
 
     /**
      * Manipulates the map once available.
@@ -195,13 +197,12 @@ public class OldMapsActivity extends FragmentActivity implements OnMapReadyCallb
                     // affichage
                     mMap.addMarker(new MarkerOptions().position(youAreHere));
                     CommandeVocale commande = listeCommandes.get(0);
-                    LatLng comm = commande.getCoordonnees();
-                    double latComm = comm.latitude;
-                    double lonComm = comm.longitude;
+                    double latComm = commande.getLatitude();
+                    double lonComm = commande.getLongitude();
 
                     // lecture de la commande vocale si on s'approche suffisement près
                     if (sqrt(Math.pow(latNow-lonNow,2)+Math.pow(latComm-lonComm,2))<5) {
-                        //lire la commande
+                        commande.initCommande(OldMapsActivity.this);
                         listeCommandes.remove(0);
                     }
 

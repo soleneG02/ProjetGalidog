@@ -1,22 +1,23 @@
 package com.example.solene.galidog;
 
 import android.Manifest;
-import android.content.BroadcastReceiver;
+import android.annotation.SuppressLint;
 import android.content.Intent;
 import android.content.pm.PackageManager;
+import android.graphics.Color;
+import android.location.GnssStatus;
 import android.location.GpsSatellite;
+import android.location.GpsStatus;
 import android.location.Location;
 import android.location.LocationListener;
 import android.location.LocationManager;
-import android.media.Image;
 import android.media.MediaPlayer;
 import android.media.MediaRecorder;
-import android.os.Environment;
-import android.provider.MediaStore;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.app.FragmentActivity;
 import android.os.Bundle;
 import android.support.v4.content.ContextCompat;
+import android.support.v4.util.Consumer;
 import android.util.Log;
 import android.view.Gravity;
 import android.view.View;
@@ -27,12 +28,17 @@ import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.OnMapReadyCallback;
 import com.google.android.gms.maps.SupportMapFragment;
+import com.google.android.gms.maps.model.BitmapDescriptor;
+import com.google.android.gms.maps.model.BitmapDescriptorFactory;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.MarkerOptions;
+import com.google.android.gms.maps.model.Polyline;
+import com.google.android.gms.maps.model.PolylineOptions;
 
 import java.io.IOException;
 import java.util.ArrayList;
-import java.util.Random;
+import java.util.Iterator;
+
 
 import static android.Manifest.permission.WRITE_EXTERNAL_STORAGE;
 import static android.Manifest.permission.RECORD_AUDIO;
@@ -46,6 +52,9 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
     private Button btnHalte;
     private Button btnAutre;
     private boolean ENREGISTREMENT_TERMINE;
+    private PolylineOptions dessin = new PolylineOptions().width(9).color(Color.BLUE);
+    private Polyline dessinTrajet;
+    private ArrayList<LatLng> listeCoord = new ArrayList<>();
 
     private LocationManager androidLocationManager;
     private LocationListener androidLocationListener;
@@ -93,6 +102,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         Cette fonction appelle les fonctions ci-dessous après le chargement de la carte, et gère le bouton d'nregistrement.
          */
         mMap = googleMap;
+        dessinTrajet = mMap.addPolyline(dessin);
 
         androidFirstLocation();
 
@@ -117,12 +127,9 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
                         btnStartRecord.setOnClickListener(new View.OnClickListener() {
                             @Override
                             public void onClick(View v) {
-                                //TransfertDonnees donnees = new TransfertDonnees(ArrayToTabCommande(listeCommandes), ArrayToTabPoint(listePoints));
                                 Intent retourAccueil = new Intent(MapsActivity.this, MainActivity.class);
                                 retourAccueil.putParcelableArrayListExtra("commandes", listeCommandes);
                                 retourAccueil.putParcelableArrayListExtra("points", listePoints);
-                                Log.i("Bundle1 crée avant envoi :", "COMMANDES :" + listeCommandes);
-                                Log.i("Bundle2 crée avant envoi :", "POINTS :" + listePoints);
                                 startActivity(retourAccueil);
                             }
                         });
@@ -153,7 +160,11 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
                     LatLng youAreHere = new LatLng(latNow, lonNow);
                     Point newPoint = new Point(latNow, lonNow);
                     listePoints.add(newPoint);
-                    mMap.addMarker(new MarkerOptions().position(youAreHere).title("Vous êtes ici"));
+
+                    listeCoord.add(new LatLng(latNow,lonNow));
+                    dessinTrajet.setPoints(listeCoord);
+                    BitmapDescriptor point1 = BitmapDescriptorFactory.fromResource(R.drawable.point2_init);
+                    mMap.addMarker(new MarkerOptions().position(youAreHere).title("Vous êtes ici").icon(point1));
                     int padding = 15;
                     mMap.animateCamera(CameraUpdateFactory.newLatLngZoom(youAreHere, padding));
                 }
@@ -195,7 +206,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
                     double lonNow = loc.getLongitude();
                     LatLng youAreHere = new LatLng(latNow, lonNow);
 
-                    //Association à une potentielle commande vocale : pas de mise à jour de l'idCommande...
+                    //Association à une potentielle commande vocale
 
                     BoutonDroite(latNow, lonNow);
                     BoutonGauche(latNow, lonNow);
@@ -207,8 +218,8 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
 
                         // Ajout à la liste des points du trajet
                         listePoints.add(pointSuivant);
-                        Vérificaion:
-                        Log.i("verifPoints", "Liste des points : " + listePoints);
+                        listeCoord.add(new LatLng(latNow,lonNow));
+                        dessinTrajet.setPoints(listeCoord);
 
                         // Affichage d'un toast au début de l'enregistrement
                         if (pointSuivant.getIdPoint() == 1) {
@@ -216,7 +227,8 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
                         }
 
                         //Création d'un marqueur
-                        mMap.addMarker(new MarkerOptions().position(youAreHere).title("Point n°" + pointSuivant.getIdPoint()));
+                        BitmapDescriptor point2 = BitmapDescriptorFactory.fromResource(R.drawable.point2_trajet);
+                        mMap.addMarker(new MarkerOptions().position(youAreHere).title("Point n°" + pointSuivant.getIdPoint()).icon(point2));
                     }
                 }
 
@@ -298,6 +310,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
     public void BoutonAutre(final double lat, final double lon) {
         //Appel bouton autre
         btnAutre.setOnClickListener(new View.OnClickListener() {
+            @SuppressLint("NewApi")
             @Override
             public void onClick(View v) {
                 onPause();
@@ -422,6 +435,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
 
         //Valider enregistrement
         btnAutre.setOnClickListener(new View.OnClickListener() {
+            @SuppressLint("NewApi")
             @Override
             public void onClick(View view) {
                 ENREG_VALIDE = true;
@@ -453,16 +467,27 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         return;
     }
 
-    // FONCTION A VERIFIER
+    // FONCTION : NE RENVOIE RIEN...
+    private int nbSat;
+
+    @SuppressLint({"MissingPermission", "NewApi"})
     public int RechercheNbSatellite() {
-        int totalSat = 0;
-        for (GpsSatellite satellite : androidLocationManager.getGpsStatus(null).getSatellites()) {
-            if(satellite .usedInFix()) {
-                totalSat ++;
+        new GpsStatus.Listener() {
+            public void onGpsStatusChanged(int event) {
+                Log.i("SALUT", "SALUT SALUT SALUT SALUT");
+                int satellites = 0;
+                int satellitesInFix = 0;
+                for (GpsSatellite sat : androidLocationManager.getGpsStatus(null).getSatellites()) {
+                    if (sat.usedInFix()) {
+                        satellitesInFix++;
+                    }
+                    satellites++;
+                }
+                Log.i("NOMBRE SATELLITES ", satellites + " Used In Last Fix (" + satellitesInFix + ")");
             }
-        }
-        Log.i("NbSatellites", "Nombre de satellites accessibles : " + totalSat);
-        return totalSat;
+        };
+        Log.i("NOMBRE DE SATELLITES ", "Nombre de satellites accessibles : " + nbSat);
+        return nbSat;
     }
 
     @Override
@@ -518,27 +543,6 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         }
     }
 
-    public Point[] ArrayToTabPoint(ArrayList<Point> listePoints) {
-        int size = listePoints.size();
-        Point[] listePointsTab = new Point[size];
-        for(int i=0 ; i < listePoints.size() ; i++) {
-            Point point = listePoints.get(i);
-
-            listePointsTab[i] = point;
-        }
-        return listePointsTab;
-    }
-
-    public CommandeVocale[] ArrayToTabCommande(ArrayList<CommandeVocale> listeCommandes) {
-        int size = listeCommandes.size();
-        CommandeVocale[] listeCommandesTab = new CommandeVocale[size];
-        for(int i=0 ; i < listeCommandes.size() ; i++) {
-            CommandeVocale comVoc = listeCommandes.get(i);
-            listeCommandesTab[i] = comVoc;
-        }
-        return listeCommandesTab;
-    }
-
     public void MediaRecorderReady(){
         mediaRecorder=new MediaRecorder();
         mediaRecorder.setAudioSource(MediaRecorder.AudioSource.MIC);
@@ -561,3 +565,4 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
                 result1 == PackageManager.PERMISSION_GRANTED;
     }
 }
+

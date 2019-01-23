@@ -14,19 +14,20 @@
         android:layout_height="match_parent"
         android:layout_alignParentStart="true"
         android:layout_alignParentTop="true"
-        tools:context=".OldMapsActivity" />
+        tools:context=".OldMapsActivity"
+        android:layout_alignParentLeft="true" />
 
-<Button
-    android:id="@+id/activity_main_btn_start_path"
-    android:layout_width="280dp"
-    android:layout_height="55dp"
-    android:background="@drawable/shape_button2"
-    android:padding="10dp"
-    android:text="Commencer le trajet"
-    android:textSize="17dp"
-    android:textStyle="bold"
-    android:layout_marginTop="550dp"
-    android:layout_centerHorizontal="true"
-    android:defaultFocusHighlightEnabled="true"/>
+    <Button
+        android:id="@+id/activity_main_btn_start_path"
+        android:layout_width="280dp"
+        android:layout_height="55dp"
+        android:background="@drawable/shape_button2"
+        android:padding="10dp"
+        android:text="Commencer le trajet"
+        android:textSize="17dp"
+        android:textStyle="bold"
+        android:layout_marginTop="550dp"
+        android:layout_centerHorizontal="true"
+        android:defaultFocusHighlightEnabled="true"/>
 
 </RelativeLayout>

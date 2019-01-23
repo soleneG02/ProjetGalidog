@@ -2,6 +2,8 @@ package com.example.solene.galidog;
 
 
 
+import android.graphics.Color;
+import android.os.CountDownTimer;
 import android.support.v4.app.FragmentActivity;
 import android.os.Bundle;
 import android.util.Log;
@@ -22,9 +24,14 @@ import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.OnMapReadyCallback;
 import com.google.android.gms.maps.SupportMapFragment;
+import com.google.android.gms.maps.model.BitmapDescriptor;
+import com.google.android.gms.maps.model.BitmapDescriptorFactory;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.LatLngBounds;
+import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
+import com.google.android.gms.maps.model.Polyline;
+import com.google.android.gms.maps.model.PolylineOptions;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -37,6 +44,10 @@ public class OldMapsActivity extends FragmentActivity implements OnMapReadyCallb
     private Button btnStartPath;
     private ArrayList<CommandeVocale> listeCommandes;
     private ArrayList<Point> listePoints;
+    private Marker marker;
+    private PolylineOptions dessin = new PolylineOptions().width(9).color(Color.BLUE);
+    private Polyline dessinTrajet;
+    private ArrayList<LatLng> listeCoord = new ArrayList<>();
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -49,8 +60,6 @@ public class OldMapsActivity extends FragmentActivity implements OnMapReadyCallb
 
         listeCommandes = getIntent().getParcelableArrayListExtra("commandes");
         listePoints = getIntent().getParcelableArrayListExtra("points");
-        Log.i("Salur OLD MAP","Salut, Commandes créée :" + listeCommandes);
-        Log.i("Salur OLD MAP","Salut, Point créée :" + listePoints);
 
         btnStartPath = (Button) findViewById(R.id.activity_main_btn_start_path);
 
@@ -68,6 +77,7 @@ public class OldMapsActivity extends FragmentActivity implements OnMapReadyCallb
     @Override
     public void onMapReady(GoogleMap googleMap) {
         mMap = googleMap;
+        dessinTrajet = mMap.addPolyline(dessin);
 
         pathView(); // afficher le trajet enregistré
 
@@ -123,7 +133,10 @@ public class OldMapsActivity extends FragmentActivity implements OnMapReadyCallb
             //la taille : parcourir la liste une premiere fois pour voir le premier element non nul??
             Point pointChemin = listePoints.get(i);
             LatLng coordonnees = new LatLng(pointChemin.getLatitude(), pointChemin.getLongitude());
-            mMap.addMarker(new MarkerOptions().position(coordonnees));
+            listeCoord.add(coordonnees);
+            dessinTrajet.setPoints(listeCoord);
+            BitmapDescriptor point1 = BitmapDescriptorFactory.fromResource(R.drawable.point2_trajet);
+            mMap.addMarker(new MarkerOptions().position(coordonnees).alpha(0.7f).icon(point1));
             builder.include(coordonnees);
         }
         LatLngBounds bounds = builder.build();
@@ -154,7 +167,10 @@ public class OldMapsActivity extends FragmentActivity implements OnMapReadyCallb
                     LatLng youAreHere = new LatLng(latNow, lonNow);
                     Point newPoint = new Point(latNow, lonNow);
                     listePoints.add(newPoint);
-                    mMap.addMarker(new MarkerOptions().position(youAreHere).title("Vous êtes ici"));
+                    listeCoord.add(new LatLng(latNow,lonNow));
+                    dessinTrajet.setPoints(listeCoord);
+                    BitmapDescriptor point2 = BitmapDescriptorFactory.fromResource(R.drawable.point2_init);
+                    marker = mMap.addMarker(new MarkerOptions().position(youAreHere).title("Vous êtes ici").icon(point2));
                     int padding = 15;
                     mMap.animateCamera(CameraUpdateFactory.newLatLngZoom(youAreHere, padding));
                 }
@@ -195,16 +211,33 @@ public class OldMapsActivity extends FragmentActivity implements OnMapReadyCallb
                     LatLng youAreHere = new LatLng(latNow, lonNow);
 
                     // affichage
-                    mMap.addMarker(new MarkerOptions().position(youAreHere));
+                    listeCoord.add(new LatLng(latNow,lonNow));
+                    dessinTrajet.setPoints(listeCoord);
+                    BitmapDescriptor point3 = BitmapDescriptorFactory.fromResource(R.drawable.point2_init);
+                    marker = mMap.addMarker(new MarkerOptions().position(youAreHere).icon(point3));
+
+                    if (listeCommandes.size() != 0) {
                     CommandeVocale commande = listeCommandes.get(0);
                     double latComm = commande.getLatitude();
                     double lonComm = commande.getLongitude();
 
                     // lecture de la commande vocale si on s'approche suffisement près
-                    if (sqrt(Math.pow(latNow-lonNow,2)+Math.pow(latComm-lonComm,2))<5) {
+                    if (sqrt(Math.pow(latNow-lonNow,2)+Math.pow(latComm-lonComm,2))<3) {
                         commande.initCommande(OldMapsActivity.this);
                         listeCommandes.remove(0);
-                    }
+                    } }
+                    new CountDownTimer(500, 1) {
+                        public void onFinish() {
+                            // When timer is finished
+                            // Execute your code here
+                            marker.remove();
+                        }
+
+                        public void onTick(long millisUntilFinished) {
+                            // millisUntilFinished    The amount of time until finished.
+                        }
+                    }.start();
+
 
                 }
                 public void onStatusChanged(String provider, int status, Bundle extras) {}
@@ -219,27 +252,6 @@ public class OldMapsActivity extends FragmentActivity implements OnMapReadyCallb
                     androidLocationListener);
 
         }
-    }
-
-
-    public ArrayList<Point> TabToArrayPoint(Point[] listePoints) {
-        int size = listePoints.length;
-        ArrayList<Point> listePointsArray = new ArrayList<>();
-        for(int i=0 ; i < size ; i++) {
-            Point point = listePoints[i];
-            listePointsArray.add(point);
-        }
-        return listePointsArray;
-    }
-
-    public ArrayList<CommandeVocale> TabToArrayCommande(CommandeVocale[] listeCommandes) {
-        int size = listeCommandes.length;
-        ArrayList<CommandeVocale> listeCommandesArray = new ArrayList<>();
-        for(int i=0 ; i < size ; i++) {
-            CommandeVocale comVoc = listeCommandes[i];
-            listeCommandesArray.add(comVoc);
-        }
-        return listeCommandesArray;
     }
 
 

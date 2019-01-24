@@ -1,16 +1,9 @@
 package com.example.solene.galidog;
 
 import android.content.Context;
-import android.content.res.AssetFileDescriptor;
-import android.content.res.AssetManager;
 import android.media.MediaPlayer;
-import android.net.Uri;
-import android.os.Bundle;
 import android.os.Parcel;
 import android.os.Parcelable;
-import android.provider.MediaStore;
-
-import com.google.android.gms.maps.model.LatLng;
 
 import java.io.IOException;
 

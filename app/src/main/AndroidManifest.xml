@@ -45,8 +45,6 @@
         <activity
             android:name=".OldMapsActivity"
             android:label="@string/title_activity_old_maps"/>
-        <activity android:name=".Enregistrement"
-            />
 
     </application>
 

@@ -2,13 +2,19 @@ package com.example.solene.galidog;
 
 import android.content.Context;
 import android.media.MediaPlayer;
+import android.net.Uri;
 import android.os.Parcel;
 import android.os.Parcelable;
+import android.widget.Toast;
 
 import java.io.IOException;
 
 public class CommandeVocale implements Parcelable {
+    /*
+    La classe CommandeVocale gère les commandes vocales.
+     */
 
+    /* Attributs de définition des commandes vocales. */
     private int idCommande;
     private static int id = 0;
     private double latitude;
@@ -16,10 +22,16 @@ public class CommandeVocale implements Parcelable {
     private String direction;
 
     public CommandeVocale(String direct, double lat, double lon, Context context) throws IOException {
+        /*
+        Fonction de création d'une commande vocale.
+         */
+
         this.idCommande = id ++;
         this.latitude = lat;
         this.longitude = lon;
         this.direction = direct;
+
+        /* Création selon l'attribut donné en arguments. */
         if (direction == "D") {
             MediaPlayer jouer = MediaPlayer.create(context, R.raw.droite);
             jouer.start();
@@ -32,28 +44,39 @@ public class CommandeVocale implements Parcelable {
             MediaPlayer jouer = MediaPlayer.create(context, R.raw.halte);
             jouer.start();
         }
-        else if (direction == "A") {
-            MediaPlayer jouer = MediaPlayer.create(context, R.raw.activez);
-            jouer.start();
+        else {
         }
     }
 
-    public void initCommande(Context context) {
-        if (direction == "D") {
+    public void jouerCommande(Context context) {
+        /*
+        Fonction de lancement d'une commande vocale lors de l'affichage du trajet.
+         */
+
+        /* Création de la ommande selon l'argument. */
+        if (direction.equals("D")) {
             MediaPlayer jouer = MediaPlayer.create(context, R.raw.droite);
             jouer.start();
+            Toast.makeText(context, "Droite activée", Toast.LENGTH_SHORT).show();
         }
-        else if (direction == "G") {
+        else if (direction.equals("G")) {
             MediaPlayer jouer = MediaPlayer.create(context, R.raw.gauche);
             jouer.start();
+            Toast.makeText(context, "Gauche activée", Toast.LENGTH_SHORT).show();
+
         }
-        else if (direction == "H") {
+        else if (direction.equals("H")) {
             MediaPlayer jouer = MediaPlayer.create(context, R.raw.halte);
             jouer.start();
+            Toast.makeText(context, "Halte activée", Toast.LENGTH_SHORT).show();
+
         }
-        else if (direction == "A") {
-            MediaPlayer jouer = MediaPlayer.create(context, R.raw.activez);
+        else if (this.direction.length() > 2 ) {
+            Uri myUri = Uri.parse(this.direction);
+            MediaPlayer jouer = MediaPlayer.create(context, myUri);
             jouer.start();
+            Toast.makeText(context, "Autre activée", Toast.LENGTH_SHORT).show();
+
         }
     }
 
@@ -76,36 +99,26 @@ public class CommandeVocale implements Parcelable {
         }
     };
 
-    public int getIdCommande() {
-        return idCommande;
-    }
-
-    public void setIdCommande(int indiceCommande) {
-        this.idCommande = indiceCommande;
-    }
-
     public double getLatitude() {
         return latitude;
     }
 
-    public void setLatitude(double latitude) {
-        this.latitude = latitude;
-    }
 
     public double getLongitude() {
         return longitude;
     }
 
-    public void setLongitude(double longitude) {
-        this.longitude = longitude;
-    }
-
     @Override
     public String toString() {
+        /*
+        Affichage de la commande vocale.
+         */
+
         return "CommandeVocale{" +
                 "idCommande=" + idCommande +
                 ", latitude=" + latitude +
                 ", longitude=" + longitude +
+                ", direction=" + direction +
                 '}';
     }
 
